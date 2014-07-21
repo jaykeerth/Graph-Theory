@@ -1,0 +1,129 @@
+package graph;
+import java.util.*;
+public class Graph {
+	int vertices;
+	ArrayList<LinkedList<Integer>> adjList;
+	public Graph(int vertices)
+	{
+		this.vertices = vertices;
+		adjList = new ArrayList<LinkedList<Integer>>();
+		for(int i=0; i<vertices; i++)
+		{
+			adjList.add(i, new LinkedList<Integer>());
+		}
+	}
+	public void addEdge(int source, int destination)
+	{
+		LinkedList<Integer> list = adjList.remove(source);
+		list.add(destination);
+		adjList.add(source, list);
+	}
+	public static LinkedList<Integer> getAdjacent(Graph g, int vertex)
+	{
+		return g.adjList.get(vertex);
+	}
+	
+	static boolean visited[];
+	public static void bfs(Graph g, int source)                                     //Time Complexity: O(V+E)
+	{                                                                               //Without Recursion: using queue
+		int vertices = g.vertices;
+		visited = new boolean[vertices];
+		for(int i=0; i<vertices; i++)
+			visited[i] = false;
+		LinkedList<Integer> queue = new LinkedList<Integer>();
+		queue.add(source);
+		visited[source] = true;
+		while(!queue.isEmpty())
+		{
+			int v = queue.removeFirst();
+			System.out.println(v);
+			for(Integer i: getAdjacent(g, v))
+			{
+				if(visited[i] == false)
+				{
+					queue.add(i);
+					visited[i] = true;
+				}
+			}
+		}
+	}
+	public static void dfs(Graph g, int source)                       //Time Complexity: O(V+E)
+	{                                                                 //Depth First Search from a given source node
+		int vertices = g.vertices;
+		visited = new boolean[vertices];
+		for(int i=0; i<vertices; i++)
+			visited[i] = false;
+		dfsUtil(g, source);
+	}
+	public static void dfs2(Graph g)                                  //Depth First Search for disconnected graph
+	{
+		int vertices = g.vertices;
+		visited = new boolean[vertices];
+		for(int i=0; i<vertices; i++)
+			visited[i] = false;
+		for(int j=0; j<vertices; j++)
+		{
+			if(visited[j] == false)
+				dfsUtil(g, j);
+		}
+	}
+	public static void dfsUtil(Graph g, int vertex)
+	{
+		visited[vertex] = true;
+		System.out.println(vertex);
+	    for(Integer v : getAdjacent(g, vertex))
+	    {
+	    	if(visited[v] == false)
+	    		dfsUtil(g, v);
+	    }
+	}
+    public static void floydWarshall(int graph[][])               //check
+    {
+    	int v = graph.length;
+    	int dist[][] = new int[v][v];
+    	int i;
+    	for(i=0; i<v; i++)
+    	{
+    		for(int j=0; j<v; j++)
+    			dist[i][j] = graph[i][j];
+    	}
+    	for(int k=0; k<v; k++)
+    	{
+    		for(i=0; i<v; i++)
+    		{
+    			for(int j=0; j<v; j++)
+    			{
+    				if(dist[i][k] != Integer.MAX_VALUE && dist[k][j] != Integer.MAX_VALUE && dist[i][k] + dist[k][j] < dist[i][j]){
+    					dist[i][j] = dist[i][k] + dist[k][j];
+    					System.out.println("inside if" +dist[i][j]);
+    				}
+    			}
+    		}
+    	}
+    	for(i=0; i<v; i++)
+    	{
+    		for(int j=0; j<v; j++)
+    		{
+    			System.out.print("      "+dist[i][j]);
+    		}
+    		System.out.println();
+    	}
+    }
+	public static void main(String[] args) {
+		/*int graph[][] = { {0,  5, Integer.MAX_VALUE, 10},
+                          {Integer.MAX_VALUE, 0,  3, -1},
+                          {Integer.MAX_VALUE, Integer.MAX_VALUE, 0,  1},
+                          {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0}
+                        };	
+        floydWarshall(graph); */
+        
+        Graph g = new Graph(4);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+        g.addEdge(1, 2);
+        g.addEdge(2, 0);
+        g.addEdge(2, 3);
+        g.addEdge(3, 3);
+        bfs(g, 2);
+	}
+}
