@@ -1,6 +1,69 @@
 package graph;
 import java.util.*;
 public class Graph {
+	static boolean recStack[];
+	public static boolean isCyclicDirected(Graph g)                                      //Time Complexity: O(V+E)
+	{
+		int vertices = g.vertices;
+		visited = new boolean[vertices];
+		recStack = new boolean[vertices];
+		int i;
+		for(i=0; i<vertices; i++)
+		{
+			visited[i] = false;
+			recStack[i] = false;
+		}
+		for(i=0; i<vertices; i++)
+		{
+			if(isCyclicDirectedUtil(g, i))
+				return true;
+		}
+		return false;
+	}
+	public static boolean isCyclicDirectedUtil(Graph g, int i)
+	{
+		if(visited[i] == false)
+		{
+			visited[i] = true;
+			recStack[i] = true;
+			for(Integer v: getAdjacent(g, i))
+			{
+			   if(visited[v] == false && isCyclicDirectedUtil(g, v) == true)
+				   return true;
+			   else if(recStack[v] == true)
+				   return true;
+			}
+		}
+		recStack[i] = false;
+		return false;
+	}
+	
+	static Stack<Integer> st = new Stack<Integer>();
+	public static void topologicalSort(Graph g)                                   //Time Complexity: O(V+E)
+	{
+		int vertices = g.vertices;
+		visited = new boolean[vertices];
+		int i;
+		for(i=0; i<vertices; i++)
+			visited[i] = false;
+		for(i=0; i<vertices; i++)
+		{
+			if(visited[i] == false)
+				topologicalSortUtil(g, i);
+		}
+		while(!st.isEmpty())
+			System.out.println(st.pop());
+	}
+	public static void topologicalSortUtil(Graph g, int v)
+	{
+		visited[v] = true;
+		for(Integer i: getAdjacent(g, v))
+		{
+			if(visited[i] == false)
+				topologicalSortUtil(g, i);
+		}
+		st.push(v);
+	}
 	public static void bfs(Graph g, int source)                                     //Time Complexity: O(V+E)
 	{                                                                               //Without Recursion: using queue
 		int vertices = g.vertices;
@@ -146,13 +209,13 @@ public class Graph {
                         };	
         floydWarshall(graph); */
         
-        Graph g = new Graph(5);
-        g.addEdge(0, 1);
-        g.addEdge(0, 2);
-        g.addEdge(1, 2);
-        g.addEdge(2, 0);
-        g.addEdge(2, 3);
-        g.addEdge(3, 3);
-        dfs3(g, 2);
+		Graph g = new Graph(4);
+		g.addEdge(0, 1);
+	    g.addEdge(0, 2);
+	    g.addEdge(1, 2);
+	    g.addEdge(2, 0);
+	    g.addEdge(2, 3);
+	    g.addEdge(3, 3);
+	    System.out.println(isCyclicDirected(g));
 	}
 }
