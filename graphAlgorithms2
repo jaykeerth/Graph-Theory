@@ -1,0 +1,43 @@
+package graph2;
+import java.util.*;
+
+class Node
+{
+	int v;
+	int weight;
+	Node(int v, int weight)
+	{
+		this.v = v;
+		this.weight = weight;
+	}
+}
+public class Graph {
+	
+    int vertices;
+    ArrayList<LinkedList<Node>> adjList;
+	
+    public Graph(int vertices)
+    {
+    	this.vertices = vertices;
+    	adjList = new ArrayList<LinkedList<Node>>();
+    	for(int i=0; i<vertices; i++)
+    		adjList.add(i, new LinkedList<Node>()); 
+    }
+    public void addEdge(int source, int destination, int weight)
+    {
+    	Node n = new Node(destination, weight);
+    	LinkedList<Node> list = adjList.remove(source);
+    	list.add(n);
+    	adjList.add(source, list);
+    }
+    public static LinkedList<Node> getAdjacent(Graph g, int vertex)
+    {
+    	return g.adjList.get(vertex);
+    }
+    
+	public static void main(String[] args) {
+		
+
+	}
+
+}
