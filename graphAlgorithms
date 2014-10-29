@@ -1,6 +1,71 @@
 package graph;
 import java.util.*;
 public class Graph {
+        public int[] dijkstras(int v)  //O(E+V)*O(LogV) which is O((E+V)*LogV) = O(ELogV) but here it will be V instead of Logv for 'contains' and 'remove'
+	{
+		int dist[] = new int[v];
+		PriorityQueue<State> minHeap = new PriorityQueue<State>();
+		dist[0] = 0;
+		State s = new State(0, 0);
+		minHeap.offer(s);
+		for(int i=1; i<v; i++)
+		{
+			dist[i] = Integer.MAX_VALUE;
+			s = new State(i, dist[i]);
+			minHeap.offer(s);
+		}
+		State currNode;
+		int tempDist = 0;
+		while(!minHeap.isEmpty())
+		{
+			currNode = minHeap.poll();
+			tempDist = currNode.distance;
+			dist[currNode.index] = currNode.distance;
+			for(Node adjNode: getAdjacent(currNode))
+			{
+				if(minHeap.contains(new State(adjNode.index, 0)))
+				{
+					if(tempDist + adjNode.distance < dist[adjNode.index])
+					{
+						dist[adjNode.index] = tempDist + adjNode.distance;
+						minHeap.remove(new State(adjNode.index, 0));
+						minHeap.offer(new State(adjNode.index, dist[adjNode.index]));
+					}
+				}
+			}
+		}
+		return dist;
+	}
+	
+	Stack<Integer> st = new Stack<Integer>();
+	public int[] shortestPathDAG(int v)  //for DAG. TC: O(V+E)
+	{
+		visited = new boolean[v];
+		for(int i=0; i<v; i++)
+		{
+			if(!visited[i])
+				topologicalSort(i);
+		}
+		int dist[] = new int[v];
+		dist[0] = 0;
+		for(int i=1; i<v; i++)
+		{
+			dist[i] = Integer.MAX_VALUE;
+		}
+		int currNode;
+		while(!st.isEmpty())
+		{
+			currNode = st.pop();
+			for(Node adjNode: getAdjacent(currNode))
+			{
+				if(dist[currNode] + adjNode.distance < dist[adjNode.index])
+				{
+					dist[adjNode.index] = dist[currNode] + adjNode.distance;
+				}
+			}
+		}
+		return dist;
+	}
 	static boolean recStack[];
 	public static boolean isCyclicDirected(Graph g)                                      //Time Complexity: O(V+E)
 	{
